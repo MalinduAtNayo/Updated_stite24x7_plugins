@@ -25,7 +25,7 @@ RMAN_BACKUP_SCHEDULE = "09:30"   # example: if the RMAN backup is scheduled to r
 
 # Set the below variable to True if the target environment is production. set the variable to Flase otherwise.
 
-IS_PROD = True
+IS_PROD = False
 
 # Mention the units of your metrics . If any new metrics are added, make an entry here for its unit if needed.
 METRICS_UNITS = {'processes_usage': '%','sessions_usage':'%','response_time':'ms','pga_cache_hit_percentage':'%'}
