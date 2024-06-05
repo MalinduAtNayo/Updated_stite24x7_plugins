@@ -201,9 +201,13 @@ class Oracle(object):
                                self.data['rman_failed_backup_count'] = 1 
 
                         else:
-                            self.data['rman_failed_backup_count'] = 1
-                            self.data['rman_completed_backup_count'] = 0
-                            self.data['rman_running_backup_count'] = 0
+                            if rman_status == "COMPLETED":
+                                self.data['rman_failed_backup_count'] = 0
+                                self.data['rman_completed_backup_count'] = 1
+                            else:
+                                self.data['rman_failed_backup_count'] = 1
+                                self.data['rman_completed_backup_count'] = 0
+                                self.data['rman_running_backup_count'] = 0
 
 
 
