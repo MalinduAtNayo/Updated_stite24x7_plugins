@@ -24,5 +24,6 @@ python -m pip install requests
 python -m pip install --upgrade pip
 python -m pip install oracledb --upgrade
 python -m pip install cx_Oracle --upgrade
+python -m pip install kubernetes --upgrade
 pause
 exit
