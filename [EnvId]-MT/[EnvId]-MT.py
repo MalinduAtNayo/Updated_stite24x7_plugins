@@ -38,7 +38,7 @@ class Plugin():
                 if (i.status.phase != 'Running') :
                     if (i.status.phase =='Succeeded'):
                         continue
-                    print(i.status.phase)
+                    #print(i.status.phase)
                     self.data["Pods not running"] += 1 
 
                 #print("%s\t%s\t%s" % (i.status.pod_ip, i.metadata.namespace, i.metadata.name))
