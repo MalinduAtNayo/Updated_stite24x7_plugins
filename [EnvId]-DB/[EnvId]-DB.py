@@ -125,17 +125,19 @@ class Oracle(object):
                 backup_schedule_timestamp = datetime.datetime.now().replace(hour=int(backup_schedule_hour[0]), minute=int(backup_schedule_hour[1]), second=0, microsecond=0)
 
                 #print (backup_schedule_timestamp)
+                
+                #print(current_time)
 
 
                 if current_time < backup_schedule_timestamp:
 
-                    c.execute("select to_char(START_TIME,'mm/dd/yy') start_time from V$RMAN_BACKUP_JOB_DETAILS where STATUS='COMPLETED' order by start_time desc FETCH FIRST 1 ROWS ONLY")
+                    c.execute("select to_char(START_TIME,'yy/mm/dd') start_time from V$RMAN_BACKUP_JOB_DETAILS where STATUS='COMPLETED' order by start_time desc FETCH FIRST 1 ROWS ONLY")
                     for row in c:
                         START_TIME = row
                         date_value_list = START_TIME[0].split('/')
-                        date_value_list[2] = "20" + date_value_list[2]   #converting year value to 20XX format
+                        date_value_list[0] = "20" + date_value_list[0]   #converting year value to 20XX format
 
-                        last_backup_run_date = datetime.date(int(date_value_list[2]), int(date_value_list[0]), int(date_value_list[1]))
+                        last_backup_run_date = datetime.date(int(date_value_list[0]), int(date_value_list[1]), int(date_value_list[2]))
                         #print(last_backup_run_date)
                         yesterday = datetime.date.today() - datetime.timedelta(days=1)
                         #print(yesterday)
@@ -146,7 +148,7 @@ class Oracle(object):
                         #print(yesterday_schedule_expected_end_time)
 
                         if (current_time < yesterday_schedule_expected_end_time):
-                            c.execute("select status as rman_status, to_char(START_TIME,'mm/dd/yy hh24:mi') start_time, to_char(END_TIME,'mm/dd/yy hh24:mi') end_time from V$RMAN_BACKUP_JOB_DETAILS order by start_time desc FETCH FIRST 1 ROWS ONLY")
+                            c.execute("select status as rman_status, to_char(START_TIME,'yy/mm/dd hh24:mi') start_time, to_char(END_TIME,'yy/mm/dd hh24:mi') end_time from V$RMAN_BACKUP_JOB_DETAILS order by start_time desc FETCH FIRST 1 ROWS ONLY")
                             for row1 in c:
                                 rman_status, start_time, end_time = row1
                             if rman_status == "COMPLETED":
@@ -169,7 +171,8 @@ class Oracle(object):
                             self.data['rman_completed_backup_count'] = 0
 
                 else:
-                    c.execute("select status as rman_status, to_char(START_TIME,'mm/dd/yy hh24:mi') start_time, to_char(END_TIME,'mm/dd/yy hh24:mi') end_time from V$RMAN_BACKUP_JOB_DETAILS order by start_time desc FETCH FIRST 1 ROWS ONLY")
+                
+                    c.execute("select status as rman_status, to_char(START_TIME,'yy/mm/dd hh24:mi') start_time, to_char(END_TIME,'yy/mm/dd hh24:mi') end_time from V$RMAN_BACKUP_JOB_DETAILS order by start_time desc FETCH FIRST 1 ROWS ONLY")
                     for row in c:
                         rman_status, start_time, end_time = row
 
@@ -178,12 +181,12 @@ class Oracle(object):
                         start_time_split = start_time.split(' ')
 
                         start_time_date = start_time_split[0].split('/')
-                        start_time_date[2] = "20" + start_time_date[2]
+                        start_time_date[0] = "20" + start_time_date[0]
                         start_time_time = start_time_split[1].split(':')
 
                         
 
-                        rman_expected_end_time = datetime.datetime(int(start_time_date[2]),int(start_time_date[0]),int(start_time_date[1]),int(start_time_time[0]),int(start_time_time[1])) + datetime.timedelta(seconds=round(avg_backup_execution_time))
+                        rman_expected_end_time = datetime.datetime(int(start_time_date[0]),int(start_time_date[1]),int(start_time_date[2]),int(start_time_time[0]),int(start_time_time[1])) + datetime.timedelta(seconds=round(avg_backup_execution_time))
 
                         #print (rman_expected_end_time)
                         #print (current_time)
