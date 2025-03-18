@@ -3,6 +3,7 @@ import json
 import argparse
 import kubernetes.client
 from kubernetes import client, config
+from datetime import datetime, timezone
  
 PLUGIN_VERSION = 1 ###Mandatory -If any changes in the plugin metrics, increment the version number.    
 HEARTBEAT="true"  ###Mandatory -Set this to true to receive alerts when there is no data from the plugin within the poll interval
@@ -42,6 +43,18 @@ class Plugin():
                     self.data["Pods not running"] += 1 
 
                 #print("%s\t%s\t%s" % (i.status.pod_ip, i.metadata.namespace, i.metadata.name))
+                
+            cm_name = 'kube-root-ca.crt'
+            cm_namespace = 'kube-system'
+            ret2 = v1.read_namespaced_config_map(cm_name, cm_namespace)
+            cluster_created_date = ret2.metadata.creation_timestamp
+            dt = datetime.now()
+            dt = dt.replace(tzinfo=timezone.utc)
+            cluster_age = dt - cluster_created_date
+            cluster_age = int(cluster_age.days)
+            days_to_cluster_expiration = 365 - cluster_age
+            self.data["days_to_cluster_expiration"] = days_to_cluster_expiration
+            
         except Exception as e:
             self.data['status']=0    ###OPTIONAL-In case of any errors,Set 'status'=0 to mark the plugin as down.
             self.data['msg'] = str(e)  ###OPTIONAL- Set the custom message to be displayed in the "Errors" field of Log Report
