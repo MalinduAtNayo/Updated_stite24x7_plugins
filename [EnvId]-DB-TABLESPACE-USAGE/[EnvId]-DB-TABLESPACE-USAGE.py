@@ -25,7 +25,7 @@ ORACLE_USERNAME = "SYSTEM"
 
 ORACLE_PASSWORD = "<Password>"
 
-TABLESPACE_NAME = ["SYSTEM","USERS","SYSAUX"]  ####Edit this field and add the names of the tablespaces to be monitored. Names are separated by comma
+TABLESPACE_NAME = ["SYSTEM","USERS","SYSAUX", "TEMP"]  ####Edit this field and add the names of the tablespaces to be monitored. Names are separated by comma
 
 # Mention the units of your metrics . If any new metrics are added, make an entry here for its unit if needed.
 METRICS_UNITS = {'usage': '%'}
