@@ -130,6 +130,8 @@ class Oracle(object):
                 source_c.execute("SELECT DEST_ID,sequence#, first_time, next_time, REGISTRAR,  applied, status FROM v$archived_log ORDER BY sequence# desc FETCH FIRST 1 ROWS ONLY")
                 for row in source_c:
                     self.data['STBY_source_sequence'] = row[1]
+                    last_archived_time = row[2] 
+                    log_age_minutes = (datetime.datetime.now() - last_archived_time).total_seconds() / 60
                     
                     
                 c.execute("SELECT PROCESS, CLIENT_PROCESS, STATUS, THREAD#, SEQUENCE#, BLOCK#, BLOCKS FROM GV$MANAGED_STANDBY where STATUS='APPLYING_LOG'")
@@ -139,7 +141,10 @@ class Oracle(object):
                 if self.data['STBY_source_sequence']+1 ==  self.data['STBY_applying_sequence']:
                     self.data['sync_status'] = 1
 
-                else :
+                elif log_age_minutes < 15:
+                    self.data['sync_status'] = 1  # Acceptable delay during log shipping (This 15mins can be adjusted according to the Network Latency)
+
+                else:
                     self.data['sync_status'] = 0
 
                 c.execute("SELECT COUNT(*) FROM GV$MANAGED_STANDBY where STATUS='APPLYING_LOG'")
