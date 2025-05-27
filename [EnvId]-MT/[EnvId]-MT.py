@@ -34,6 +34,8 @@ class Plugin():
                     if j.ready is False:
                         if j.name == 'ifs-db-init':
                             continue
+                        if j.name == 'ifsapp-am-scheduler':
+                            continue
                         #print(j.ready)
                         self.data["Containers not ready"] += 1
                 if (i.status.phase != 'Running') :
