@@ -4,6 +4,10 @@ import argparse
 import kubernetes.client
 from kubernetes import client, config
 from datetime import datetime, timezone
+import urllib3
+
+# Disable SSL warnings (Python 3.13 requirement)
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
  
 PLUGIN_VERSION = 1 ###Mandatory -If any changes in the plugin metrics, increment the version number.    
 HEARTBEAT="true"  ###Mandatory -Set this to true to receive alerts when there is no data from the plugin within the poll interval
@@ -23,7 +27,10 @@ class Plugin():
     def getData(self):  ### The getData method contains Sample data. User can enhance the code to fetch Original data
         try: ##set the data object based on the requirement
             
-            config.load_kube_config(KUBE_CONFIG_PATH)  
+            config.load_kube_config(KUBE_CONFIG_PATH)
+            configuration = client.Configuration.get_default_copy()
+            configuration.verify_ssl = False
+            client.Configuration.set_default(configuration) 
 
             v1 = kubernetes.client.CoreV1Api()
             #print("Listing pods with their IPs:")
