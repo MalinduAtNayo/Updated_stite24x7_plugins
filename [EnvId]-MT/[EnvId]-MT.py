@@ -6,6 +6,7 @@ from kubernetes import client, config
 from datetime import datetime, timezone
 import urllib3
 
+
 # Disable SSL warnings (Python 3.13 requirement)
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
  
@@ -31,6 +32,7 @@ class Plugin():
             configuration = client.Configuration.get_default_copy()
             configuration.verify_ssl = False
             client.Configuration.set_default(configuration) 
+
 
             v1 = kubernetes.client.CoreV1Api()
             #print("Listing pods with their IPs:")
